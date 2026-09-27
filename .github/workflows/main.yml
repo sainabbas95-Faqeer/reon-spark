@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
+permissions:
+  contents: write
 
 jobs:
   check:
@@ -14,3 +16,10 @@ jobs:
           python-version: '3.10'
       - run: pip install pandas requests
       - run: python auto_seg_hourly.py
+      - name: Save State
+        run: |
+          git config user.name "REON-BOT"
+          git config user.email "bot@reon.com"
+          git add last_alarm_state.json || true
+          git diff --staged --quiet || git commit -m "state"
+          git push
